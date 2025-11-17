@@ -1,0 +1,159 @@
+TypeScript Interview Questions
+1. What is TypeScript and how is it different from JavaScript?
+
+TypeScript is a superset of JavaScript that adds static typing and type checking.
+
+It compiles down to plain JavaScript, which browsers can execute.
+
+Differences:
+
+Feature	JavaScript	TypeScript
+Typing	Dynamic	Static
+Compilation	Interpreted	Compiled to JS
+Error detection	Runtime	Compile-time
+File extension	.js	.ts
+
+✅ Example:
+
+let count: number = 10;  // TS checks type
+count = "ten"; // ❌ Error in TypeScript
+
+2. Benefits of using TypeScript in automation projects
+
+Detects errors before runtime (provide type safety)
+
+Supports OOP principles (classes, interfaces, objects)
+
+Code is compiled before running, reducing runtime failures.
+
+Helps in robust and maintainable automation frameworks
+
+Makes frameworks like Playwright or Selenium more maintainable with strong typing for Page, Locator, etc.
+
+Easier refactoring and debugging
+
+3. What is type inference in TypeScript?
+
+Explicit inference → Manually specifying types.
+
+Implicit inference → TypeScript automatically infers type.
+
+let vehicle: string;
+let num = 14;   // inferred as number
+
+When TypeScript automatically determines a variable’s type based on its assigned value.
+
+Example:
+
+let version = "1.0"; // inferred as string
+version = 2; // ❌ Error: Type 'number' not assignable to 'string'
+
+
+➡ You didn’t explicitly define string, but TypeScript inferred it.
+
+
+5. What is a union type and how do you use it?
+
+A union type allows a variable to have multiple possible types.
+
+Example:
+
+let data: string | number;
+data = "Hello";
+data = 123; // both allowed
+
+Useful in cases like APIs where an id can be string or number.
+
+6. Difference between any, unknown
+Type	Description				Example
+any	Disables type checking	Completely		let val: any = 10; val = "Hi"
+unknown	Type-safe version of any (must check type before using)	let val: unknown; if(typeof val==='string'){console.log(val.toUpperCase())}
+
+7. What is type assertion and how do you do it?
+
+It tells TypeScript to treat a variable as a specific type.
+
+Syntax
+
+There are two ways to do type assertion:
+
+1️⃣ Using the "as" syntax (Recommended)
+
+2️⃣ Using the angle bracket syntax (Not recommended in JSX files)
+
+Syntax:
+
+let value: unknown = "Playwright";
+let len1 = (value as string).length;
+let len2 = (<string>value).length; // alternate syntax
+
+
+1. How do you handle JavaScript alerts, confirms, and prompts in Playwright?
+
+Playwright auto-dismisses dialogs by default, but you can handle them:
+
+Use the page.on('dialog') event to listen and respond to dialogs.
+
+Example:
+
+page.on('dialog', async (dialog) => {
+  console.log(dialog.message());
+  await dialog.accept("Input for prompt"); // or dialog.dismiss();
+});
+
+await page.click('#alertButton');
+
+2. What is page.on('dialog') and how do you use it?
+
+It registers an event listener that triggers when an alert/confirm/prompt appears.
+
+Example:
+
+page.on('dialog', async dialog => {
+  console.log("Dialog type:", dialog.type());
+  await dialog.accept();
+});
+
+3. How do you test alert confirmation logic in Playwright?
+
+You can simulate user action by accepting or dismissing the alert, then verifying page behavior.
+
+Example:
+
+page.on('dialog', dialog => dialog.accept());
+await page.click('#confirmButton');
+await expect(page.locator('#status')).toHaveText('Confirmed');
+
+1. How do you interact with elements inside an iframe?
+
+Use either page.frame() or frameLocator().
+
+Use frameLocator (modern approach).
+use page.frame() (older way).
+
+Example (frame):
+
+const frame = page.frame({ url: /leafground.com\/frame/ });
+await frame?.locator('#Click').click();
+
+
+Example (frameLocator):
+
+await page.frameLocator('iframe[name="firstFrame"]').locator('#Click').click();
+
+2. Difference between page.frame() and frameLocator()
+Method	Description	Use Case
+page.frame()	Returns a Frame object (JS handle)	Used when you know URL or name of frame
+frameLocator()	Returns a Locator (auto-handles waiting & scoping)	Easier for nested frame interactions
+
+3. How do you handle nested iframes?
+
+Use chained frameLocator() calls.
+
+Example:
+
+await page
+  .frameLocator('#outerFrame')
+  .frameLocator('#innerFrame')
+  .locator('#button')
+  .click();
